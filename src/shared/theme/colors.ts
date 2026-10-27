@@ -1,0 +1,15 @@
+export const colors = {
+  paper: '#F3F0E8',
+  card: '#FFFCF7',
+  ink: '#1C1915',
+  muted: '#6E685F',
+  line: '#E3DCD0',
+  accent: '#0E6B62',
+  accentInk: '#F4FFFD',
+  accentSoft: '#D7EFEA',
+  warn: '#8C3E1E',
+  warnSoft: '#F8E7D8',
+  promise: '#E7F0E4',
+  thunk: '#E4EEF6',
+  saga: '#F6EBD9',
+};
