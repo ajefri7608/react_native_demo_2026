@@ -3,18 +3,22 @@ import { StyleSheet, Text, View, type LayoutChangeEvent } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { FlatList } from 'react-native-gesture-handler';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
 } from 'react-native-reanimated';
 import type { FeedStackParamList } from '../../../app/navigation/types';
-import { PressableScale } from '../../../shared/ui/ActionButton';
 import { colors } from '../../../shared/theme/colors';
-import { CustomTabView } from '../components/CustomTabView';
-import { HORIZONTAL_ACTIVATION, VERTICAL_FAIL } from '../components/gestureAxis';
-import { usePathPager } from '../components/usePathPager';
-import { FEED_ITEMS, NOTES, type FeedItem, type Note } from '../data/notes';
+import { useAppSelector } from '../../../store/hooks';
+import { selectUserName, selectUserSource } from '../../../store/selectors';
+import { TabView } from '../../../shared/ui/TabView';
+import { HORIZONTAL_ACTIVATION, VERTICAL_FAIL } from '../../../shared/ui/tabGesture';
+import { useTabPager } from '../../../shared/ui/useTabPager';
+import { NoteRow } from '../components/NoteRow';
+import { PathPage } from '../components/PathPage';
+import { StoreNameLine } from '../components/StoreNameLine';
+import { PATHS, PATH_ROWS } from '../data/paths';
+import { FEED_ITEMS, NOTES, type FeedItem } from '../data/notes';
 
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList<FeedItem>);
 
@@ -24,8 +28,10 @@ type FeedNavigation = NativeStackNavigationProp<
 >;
 
 export function FeedScreen() {
-  const insets = useSafeAreaInsets();
-  const pager = usePathPager();
+  const navigation = useNavigation<FeedNavigation>();
+  const pager = useTabPager(PATHS.length);
+  const name = useAppSelector(selectUserName);
+  const source = useAppSelector(selectUserSource);
   const scrollY = useSharedValue(0);
   const headerHeight = useSharedValue(0);
   const [listHeight, setListHeight] = useState(0);
@@ -44,21 +50,36 @@ export function FeedScreen() {
     const next = event.nativeEvent.layout.height;
     setListHeight(current => (current === next ? current : next));
   }, []);
+  const openNote = useCallback(
+    (noteId: string) => {
+      navigation.navigate('NoteDetail', { noteId });
+    },
+    [navigation],
+  );
   const renderItem = useCallback(
     ({ item }: { item: FeedItem }) => {
       if (item.kind === 'tabview') {
         return (
-          <CustomTabView
+          <TabView
             pager={pager}
+            tabs={PATHS}
             scrollY={scrollY}
             headerHeight={headerHeight}
             minHeight={listHeight}
-          />
+            renderPage={(path, pageWidth) => (
+              <PathPage
+                path={path}
+                rows={PATH_ROWS[path.key]}
+                pageWidth={pageWidth}
+              />
+            )}>
+            <StoreNameLine name={name} source={source} />
+          </TabView>
         );
       }
-      return <NoteRow note={item} />;
+      return <NoteRow title={item.title} onPress={() => openNote(item.id)} />;
     },
-    [headerHeight, listHeight, pager, scrollY],
+    [headerHeight, listHeight, name, openNote, pager, scrollY, source],
   );
   const header = useCallback(
     () => (
@@ -66,16 +87,16 @@ export function FeedScreen() {
         <FeedIntro />
         {NOTES.map(note => (
           <View key={note.id} style={styles.noteWrap}>
-            <NoteRow note={note} />
+            <NoteRow title={note.title} onPress={() => openNote(note.id)} />
           </View>
         ))}
       </View>
     ),
-    [onHeaderLayout],
+    [onHeaderLayout, openNote],
   );
 
   return (
-    <View style={[styles.list, ]}>
+    <View style={styles.list}>
       <AnimatedFlatList
         data={FEED_ITEMS}
         keyExtractor={item => item.id}
@@ -114,22 +135,6 @@ function FeedIntro() {
   );
 }
 
-function NoteRow({ note }: { note: Note }) {
-  const navigation = useNavigation<FeedNavigation>();
-
-  return (
-    <PressableScale
-      onPress={() => navigation.navigate('NoteDetail', { noteId: note.id })}
-      style={styles.note}>
-      <View style={styles.noteCopy}>
-        <Text style={styles.noteTitle}>{note.title}</Text>
-        <Text style={styles.noteMeta}>route param 只帶 noteId</Text>
-      </View>
-      <Text style={styles.chevron}>›</Text>
-    </PressableScale>
-  );
-}
-
 const styles = StyleSheet.create({
   list: {
     flex: 1,
@@ -162,35 +167,5 @@ const styles = StyleSheet.create({
   },
   noteWrap: {
     marginBottom: 12,
-  },
-  note: {
-    marginHorizontal: 16,
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    borderRadius: 16,
-    backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.line,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  noteCopy: {
-    flex: 1,
-  },
-  noteTitle: {
-    color: colors.ink,
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  noteMeta: {
-    marginTop: 4,
-    color: colors.muted,
-    fontSize: 13,
-  },
-  chevron: {
-    marginLeft: 12,
-    color: colors.muted,
-    fontSize: 28,
-    lineHeight: 28,
   },
 });

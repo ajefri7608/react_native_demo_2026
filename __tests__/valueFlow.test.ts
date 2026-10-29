@@ -11,7 +11,7 @@ import { fetchUserByThunk, runThunkRace } from '../src/store/user/userThunks';
 import {
   HORIZONTAL_ACTIVATION,
   VERTICAL_FAIL,
-} from '../src/features/feed/components/gestureAxis';
+} from '../src/shared/ui/tabGesture';
 import { QUICK_MS, SLOW_MS, TIMEOUT_MS } from '../src/shared/api/userApi';
 
 describe('value flow', () => {

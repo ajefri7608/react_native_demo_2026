@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -6,7 +5,6 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getUser, QUICK_MS, SLOW_MS, TIMEOUT_MS } from '../../../shared/api/userApi';
@@ -27,6 +25,7 @@ import {
 } from '../../../store/user/userSaga';
 import { setDraftName, setUser, setUserLoading } from '../../../store/user/userSlice';
 import { fetchUserByThunk, runThunkRace } from '../../../store/user/userThunks';
+import { WriteSection } from '../components/WriteSection';
 
 export function WriteScreen() {
   const insets = useSafeAreaInsets();
@@ -67,16 +66,16 @@ export function WriteScreen() {
         />
         <Text style={styles.status}>status {status}</Text>
 
-        <Section title="元件裡的 Promise">
+        <WriteSection title="元件裡的 Promise">
           <ActionButton
             tone="accent"
             label="await 完再 dispatch"
             detail="這段在元件裡。不經過 thunk middleware。"
             onPress={onPromise}
           />
-        </Section>
+        </WriteSection>
 
-        <Section title="Thunk">
+        <WriteSection title="Thunk">
           <ActionButton
             label="dispatch(fetchUser)"
             detail="函式裡 getState() 讀 draftName，再送普通 action。"
@@ -84,9 +83,9 @@ export function WriteScreen() {
               dispatch(fetchUserByThunk());
             }}
           />
-        </Section>
+        </WriteSection>
 
-        <Section title="Saga">
+        <WriteSection title="Saga">
           <ActionButton
             label="dispatch(user/fetch)"
             detail="takeLatest。連按會取消上一次還沒寫入的 worker。"
@@ -94,9 +93,9 @@ export function WriteScreen() {
               dispatch(fetchUserRequested());
             }}
           />
-        </Section>
+        </WriteSection>
 
-        <Section title="競賽">
+        <WriteSection title="競賽">
           <Text style={styles.note}>
             慢的請求 {SLOW_MS / 1000} 秒，逾時 {TIMEOUT_MS / 1000} 秒。逾時會先把
             name 寫成「逾時」。
@@ -116,9 +115,9 @@ export function WriteScreen() {
               dispatch(fetchUserRaceRequested());
             }}
           />
-        </Section>
+        </WriteSection>
 
-        <Section title="createAsyncThunk">
+        <WriteSection title="createAsyncThunk">
           <ActionButton
             label="pending / fulfilled"
             detail="extraReducers 把這兩個 action 寫進 user slice。"
@@ -126,9 +125,9 @@ export function WriteScreen() {
               dispatch(fetchUserAsync(draft));
             }}
           />
-        </Section>
+        </WriteSection>
 
-        <Section title="不進這個 name 的寫法">
+        <WriteSection title="不進這個 name 的寫法">
           <ActionButton
             label="購物車 +1"
             detail="改 cart.count。選 name 的元件不重繪。"
@@ -143,9 +142,9 @@ export function WriteScreen() {
               setStaticUser(draft.trim() || 'Amy');
             }}
           />
-        </Section>
+        </WriteSection>
 
-        <Section title="reducer 寫進去的紀錄">
+        <WriteSection title="reducer 寫進去的紀錄">
           {log.length === 0 ? (
             <Text style={styles.note}>還沒有 action。</Text>
           ) : (
@@ -155,18 +154,9 @@ export function WriteScreen() {
               </Text>
             ))
           )}
-        </Section>
+        </WriteSection>
       </ScrollView>
     </KeyboardAvoidingView>
-  );
-}
-
-function Section({ title, children }: { title: string; children: ReactNode }) {
-  return (
-    <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{title}</Text>
-      <View style={styles.stack}>{children}</View>
-    </View>
   );
 }
 
@@ -211,18 +201,6 @@ const styles = StyleSheet.create({
     marginTop: 8,
     color: colors.muted,
     fontSize: 13,
-  },
-  section: {
-    marginTop: 22,
-  },
-  sectionTitle: {
-    color: colors.ink,
-    fontSize: 13,
-    fontWeight: '700',
-  },
-  stack: {
-    marginTop: 8,
-    gap: 10,
   },
   note: {
     color: colors.muted,

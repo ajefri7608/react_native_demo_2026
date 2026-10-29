@@ -6,13 +6,11 @@ import {
   withSpring,
   type SharedValue,
 } from 'react-native-reanimated';
-import { HORIZONTAL_ACTIVATION, VERTICAL_FAIL } from './gestureAxis';
-import { PATHS } from '../data/paths';
+import { HORIZONTAL_ACTIVATION, VERTICAL_FAIL } from './tabGesture';
 
-const PAGE_COUNT = PATHS.length;
 const SPRING = { duration: 280, dampingRatio: 0.86 };
 
-export type PathPager = {
+export type TabPager = {
   pan: PanGesture;
   goTo: (index: number) => void;
   translateX: SharedValue<number>;
@@ -20,12 +18,13 @@ export type PathPager = {
   selected: number;
 };
 
-export function usePathPager(): PathPager {
+export function useTabPager(pageCount: number): TabPager {
   const translateX = useSharedValue(0);
   const pageWidth = useSharedValue(0);
   const dragOrigin = useSharedValue(0);
+  const count = useSharedValue(pageCount);
+  count.value = pageCount;
   const [selected, setSelected] = useState(0);
-  const pageCount = PAGE_COUNT;
 
   const commit = useCallback((next: number) => {
     setSelected(next);
@@ -34,7 +33,7 @@ export function usePathPager(): PathPager {
   const goTo = useCallback(
     (next: number) => {
       const width = pageWidth.value;
-      const index = Math.min(pageCount - 1, Math.max(0, next));
+      const index = Math.min(Math.max(pageCount - 1, 0), Math.max(0, next));
       if (width > 0) {
         translateX.value = withSpring(-index * width, SPRING);
       }
@@ -54,13 +53,14 @@ export function usePathPager(): PathPager {
       if (width <= 0) {
         return;
       }
-      const min = -width * (pageCount - 1);
+      const min = -width * (count.value - 1);
       const next = dragOrigin.value + event.translationX;
       translateX.value = Math.min(0, Math.max(min, next));
     },
     onDeactivate: event => {
       const width = pageWidth.value;
-      if (width <= 0) {
+      const last = count.value - 1;
+      if (width <= 0 || last < 0) {
         return;
       }
       let next = Math.round(-translateX.value / width);
@@ -70,8 +70,8 @@ export function usePathPager(): PathPager {
       }
       if (next < 0) {
         next = 0;
-      } else if (next > pageCount - 1) {
-        next = pageCount - 1;
+      } else if (next > last) {
+        next = last;
       }
       translateX.value = withSpring(-next * width, SPRING);
       runOnJS(commit)(next);
