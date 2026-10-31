@@ -63,7 +63,7 @@ export function RootNavigator() {
           lazy: false,
           sceneStyle: { backgroundColor: colors.paper },
         }}>
-        <Tab.Screen name="FeedTab" component={FeedScreen} />
+        <Tab.Screen name="FeedTab" component={FeedStackScreen} />
         <Tab.Screen name="WriteTab" component={WriteScreen} />
         <Tab.Screen name="ReadTab" component={ReadScreen} />
       </Tab.Navigator>
