@@ -25,3 +25,4 @@ npm run android
 - **讀取**：`useSelector` 的比對範圍、`shallowEqual`、`createSelector`、靜態欄位、`useCallback`。
 
 跨頁要跟著變的名字在 store。只有這一頁用的輸入用元件 state 或 `draftName`。只帶到下一頁的 id 用 route params。
+1
