@@ -5,8 +5,15 @@ export type FeedStackParamList = {
   NoteDetail: { noteId: string };
 };
 
+export type LibraryStackParamList = {
+  Login: undefined;
+  BooksHome: undefined;
+  BookDetail: { bookId: number };
+};
+
 export type RootTabParamList = {
   FeedTab: NavigatorScreenParams<FeedStackParamList>;
   WriteTab: undefined;
   ReadTab: undefined;
+  LibraryTab: NavigatorScreenParams<LibraryStackParamList>;
 };

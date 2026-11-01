@@ -8,6 +8,7 @@ import { ReadScreen } from '../../features/read/screens/ReadScreen';
 import { WriteScreen } from '../../features/write/screens/WriteScreen';
 import { colors } from '../../shared/theme/colors';
 import { renderBottomNaviigationBar } from './BottomNaviigationBar';
+import { LibraryNavigator } from './LibraryNavigator';
 import type { FeedStackParamList, RootTabParamList } from './types';
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
@@ -66,6 +67,7 @@ export function RootNavigator() {
         <Tab.Screen name="FeedTab" component={FeedStackScreen} />
         <Tab.Screen name="WriteTab" component={WriteScreen} />
         <Tab.Screen name="ReadTab" component={ReadScreen} />
+        <Tab.Screen name="LibraryTab" component={LibraryNavigator} />
       </Tab.Navigator>
     </NavigationContainer>
   );

@@ -1,6 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
+import { bindAccessToken } from '../shared/api/token';
 import { rootSaga } from './rootSaga';
+import { selectAccessToken } from './selectors';
 import { appReducer } from './types';
 
 export function createAppStore() {
@@ -16,5 +18,7 @@ export function createAppStore() {
 }
 
 export const store = createAppStore();
+
+bindAccessToken(() => selectAccessToken(store.getState()));
 
 export type AppDispatch = typeof store.dispatch;
