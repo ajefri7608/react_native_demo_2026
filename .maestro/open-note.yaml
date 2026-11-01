@@ -1,0 +1,24 @@
+appId: com.reactnativedemo
+---
+- launchApp
+- repeat:
+    times: 12
+    while:
+      notVisible: "三條路，一個 reducer"
+    commands:
+      - swipe:
+          direction: DOWN
+          duration: 4000
+- runFlow:
+    when:
+      visible: "Open debugger to view warnings."
+    commands:
+      - tapOn:
+          point: "92%,92%"
+- tapOn: "三條路，一個 reducer"
+- assertVisible: "reducer"
+- scrollUntilVisible:
+    element: "到寫入頁"
+    direction: DOWN
+- tapOn: "到寫入頁"
+- assertVisible: "寫進 store"

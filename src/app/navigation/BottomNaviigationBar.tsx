@@ -12,6 +12,7 @@ const LABELS: Record<string, string> = {
   FeedTab: '流動',
   WriteTab: '寫入',
   ReadTab: '讀取',
+  LibraryTab: '書庫',
 };
 
 export function renderBottomNaviigationBar(props: BottomTabBarProps) {

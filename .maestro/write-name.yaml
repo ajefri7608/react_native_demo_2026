@@ -1,0 +1,33 @@
+appId: com.reactnativedemo
+---
+- launchApp
+- repeat:
+    times: 12
+    while:
+      notVisible: "寫入"
+    commands:
+      - swipe:
+          direction: DOWN
+          duration: 4000
+- runFlow:
+    when:
+      visible: "Open debugger to view warnings."
+    commands:
+      - tapOn:
+          point: "92%,92%"
+- tapOn: "寫入"
+- tapOn: "名字，空白時 API 回 Amy"
+- inputText: "Ada"
+- hideKeyboard
+- tapOn: "await 完再 dispatch"
+- extendedWaitUntil:
+    visible: "status succeeded"
+    timeout: 10000
+- runFlow:
+    when:
+      visible: "Open debugger to view warnings."
+    commands:
+      - tapOn:
+          point: "92%,92%"
+- tapOn: "讀取"
+- assertVisible: "Ada"
