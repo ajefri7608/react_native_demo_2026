@@ -4,6 +4,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { LibraryStackParamList } from '../../../app/navigation/types';
 import { apiBaseUrl } from '../../../shared/api/baseUrl';
+import { appEnvironment } from '../../../shared/config/env';
 import { ActionButton } from '../../../shared/ui/ActionButton';
 import { colors } from '../../../shared/theme/colors';
 import { useAppDispatch } from '../../../store/hooks';
@@ -33,7 +34,9 @@ export function BooksScreen() {
       <Text style={styles.lead}>
         列表來自 GET /api/v1/books。點一本只把 bookId 帶到下一頁。
       </Text>
-      <Text style={styles.endpoint}>{apiBaseUrl()}</Text>
+      <Text style={styles.endpoint}>
+        {appEnvironment.label} · {apiBaseUrl()}
+      </Text>
       {library.dataSource ? (
         <Text style={styles.meta}>dataSource {library.dataSource}</Text>
       ) : null}

@@ -1,6 +1,5 @@
 import { NativeModules, Platform } from 'react-native';
-
-const API_PORT = 8080;
+import { appEnvironment, baseUrlFor } from '../config/env';
 
 type SourceCodeModule = {
   scriptURL?: string;
@@ -35,5 +34,5 @@ export function apiHost(): string {
 }
 
 export function apiBaseUrl(): string {
-  return `http://${apiHost()}:${API_PORT}`;
+  return baseUrlFor(appEnvironment.name, apiHost());
 }
