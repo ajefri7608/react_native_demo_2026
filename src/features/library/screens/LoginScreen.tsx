@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { apiBaseUrl } from '../../../shared/api/baseUrl';
+import { appEnvironment } from '../../../shared/config/env';
 import { ActionButton } from '../../../shared/ui/ActionButton';
 import { colors } from '../../../shared/theme/colors';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
@@ -39,7 +40,9 @@ export function LoginScreen() {
         <Text style={styles.lead}>
           這個 tab 在未登入時只掛登入頁。登入成功後，導覽器會自己換成書庫。
         </Text>
-        <Text style={styles.endpoint}>{apiBaseUrl()}</Text>
+        <Text style={styles.endpoint}>
+          {appEnvironment.label} · {apiBaseUrl()}
+        </Text>
         <TextInput
           value={username}
           onChangeText={setUsername}
